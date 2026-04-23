@@ -1,0 +1,74 @@
+<div class="fixed inset-0 z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+    <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75 backdrop-blur-sm" (click)="onClose()"></div>
+
+    <div class="relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-luxury-surface bg-luxury-surface rounded-xl shadow-xl sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6 border border-gray-200 dark:border-gray-700">
+      
+      <div class="absolute top-0 right-0 pt-4 pr-4">
+        <button type="button" (click)="onClose()" class="text-gray-400 bg-luxury-surface bg-luxury-surface hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sm:flex sm:items-start w-full">
+        <div class="w-full mt-3 text-center sm:mt-0 sm:text-left">
+          <h3 class="text-lg font-medium leading-6 text-white text-white mb-4">
+            {{ editStrategy ? 'Edit Strategy' : 'Add New Strategy' }}
+          </h3>
+          
+          <form [formGroup]="strategyForm" (ngSubmit)="onSubmit()" class="space-y-4">
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Strategy Name</label>
+              <input type="text" formControlName="name" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-luxury-surface bg-luxury-elevated text-white text-white px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
+                <select formControlName="type" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-luxury-surface bg-luxury-elevated text-white text-white px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                  <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Timeframe</label>
+                <select formControlName="timeframe" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-luxury-surface bg-luxury-elevated text-white text-white px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                  <option *ngFor="let tf of timeframes" [value]="tf">{{ tf }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Indicators Used</label>
+              <input type="text" formControlName="indicators" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-luxury-surface bg-luxury-elevated text-white text-white px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="e.g. EMA 20, RSI(14)">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Entry Rules</label>
+              <textarea rows="3" formControlName="entryRules" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-luxury-surface bg-luxury-elevated text-white text-white px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Define exact conditions to enter..."></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Exit Rules (TP/SL)</label>
+              <textarea rows="3" formControlName="exitRules" class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-luxury-surface bg-luxury-elevated text-white text-white px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Define invalidation point and targets..."></textarea>
+            </div>
+
+            <div class="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse pt-4 border-t border-gray-200 dark:border-gray-700">
+              <button type="submit" [disabled]="strategyForm.invalid" 
+                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 transition-colors">
+                {{ editStrategy ? 'Save Changes' : 'Add Strategy' }}
+              </button>
+              <button type="button" (click)="onClose()" 
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-luxury-surface bg-luxury-surface text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm transition-colors">
+                Cancel
+              </button>
+            </div>
+            
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

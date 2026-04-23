@@ -1,0 +1,170 @@
+<div class="page-container min-h-full animate-fade-in" style="color:var(--theme-text)">
+
+  <!-- ===================== HEADER ===================== -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
+    <div>
+      <h1 class="text-3xl font-black tracking-tight" style="color:#ffffff">{{ t('trades.title') }}</h1>
+      <p class="mt-1 text-sm font-bold uppercase tracking-widest" style="color:var(--theme-muted)">Portfolio Ledger & History</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <!-- Calculator Trigger (Luxe version of the "Add" feeling) -->
+      <button (click)="openCalcModal()" class="btn-ghost px-5 py-3 rounded-2xl flex items-center gap-2">
+        <lucide-angular [img]="icons.Calculator" class="w-4 h-4"></lucide-angular>
+        {{ t('nav.risk') }}
+      </button>
+      
+      <button (click)="openModal()" class="btn-gold px-6 py-3 rounded-2xl flex items-center gap-2 shadow-gold group">
+        <lucide-angular [img]="icons.Plus" class="w-4 h-4 transition-transform group-hover:rotate-90"></lucide-angular>
+        {{ t('trades.add') }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== SUMMARY BAR (GAP-6) ===================== -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" *ngIf="trades$ | async as all">
+    <div class="fn-card p-6" style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+      <span class="text-[10px] font-black uppercase tracking-widest block mb-1" style="color:var(--theme-muted)">Win Rate</span>
+      <span class="text-2xl font-black" style="color:var(--theme-accent)">{{ getWinRate(all) }}%</span>
+    </div>
+    <div class="fn-card p-6" style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+      <span class="text-[10px] font-black uppercase tracking-widest block mb-1" style="color:var(--theme-muted)">Total P&L</span>
+      <span class="text-2xl font-black" [style.color]="getTotalPnl(all) >= 0 ? '#00ff88' : '#ff4444'">
+        {{ (getTotalPnl(all) >= 0 ? '+' : '') + (getTotalPnl(all) | currency:'USD') }}
+      </span>
+    </div>
+    <div class="fn-card p-6" style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+      <span class="text-[10px] font-black uppercase tracking-widest block mb-1" style="color:var(--theme-muted)">Total Executions</span>
+      <span class="text-2xl font-black" style="color:#ffffff">{{ all.length }}</span>
+    </div>
+    <div class="fn-card p-6" style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+      <span class="text-[10px] font-black uppercase tracking-widest block mb-1" style="color:var(--theme-muted)">Last Updated</span>
+      <span class="text-sm font-black uppercase" style="color:var(--theme-accent)">{{ t('calendar.today') }}</span>
+    </div>
+  </div>
+
+  <!-- ===================== TOOLS & FILTERS ===================== -->
+  <div class="fn-card p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6"
+       style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+    
+    <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+      <!-- Search Input -->
+      <div class="relative w-full md:w-80">
+        <lucide-angular [img]="icons.Search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" 
+                        style="color:var(--theme-muted)"></lucide-angular>
+        <input type="text" [(ngModel)]="searchText" (ngModelChange)="applyFilters()"
+               [placeholder]="t('trades.search')"
+               class="luxury-input !ps-12 !py-3 font-bold">
+      </div>
+
+      <!-- Type Filter -->
+      <div class="flex items-center gap-2 w-full md:w-auto">
+        <button *ngFor="let f of ['All', 'Buy', 'Sell']"
+                (click)="typeFilter = f; applyFilters()"
+                class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
+                [style.background]="typeFilter === f ? 'var(--theme-accent)' : 'rgba(255,255,255,0.04)'"
+                [style.color]="typeFilter === f ? '#000000' : 'var(--theme-muted)'"
+                [style.border]="typeFilter === f ? 'none' : '1px solid var(--theme-border)'">
+          {{ f === 'All' ? 'Complete' : (f === 'Buy' ? t('trades.buy') : t('trades.sell')) }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Export Actions -->
+    <div class="flex items-center gap-3 w-full md:w-auto">
+      <button (click)="exportToPDF()" class="btn-ghost px-5 py-3 rounded-2xl flex items-center gap-2 text-xs">
+        <lucide-angular [img]="icons.Download" class="w-4 h-4"></lucide-angular>
+        {{ t('nav.reports') }} (PDF)
+      </button>
+      <button (click)="refresh()" class="btn-ghost p-3 rounded-2xl">
+        <lucide-angular [img]="icons.RefreshCw" class="w-4 h-4"></lucide-angular>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== TRADES TABLE (HORIZONTAL SCROLL ON MOBILE) ===================== -->
+  <div class="fn-card overflow-hidden shadow-2xl animate-fade-in animate-d2"
+       style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+    <div class="table-scroll">
+      <table class="trade-table w-full">
+        <thead>
+          <tr style="background:rgba(0,0,0,0.3)">
+            <th>{{ t('trades.col.date') }}</th>
+            <th>{{ t('trades.col.symbol') }}</th>
+            <th>{{ t('trades.col.type') }}</th>
+            <th style="text-align:end">{{ t('trades.col.lots') }}</th>
+            <th style="text-align:end">{{ t('trades.col.entry') }}</th>
+            <th style="text-align:end">{{ t('trades.col.exit') }}</th>
+            <th style="text-align:end">{{ t('trades.col.pnl') }}</th>
+            <th class="text-center">{{ t('trades.col.actions') }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/10 dark:divide-white/5">
+          <tr *ngFor="let trade of filteredTrades$ | async; let i = index" 
+              class="group hover:bg-luxury-surface/5 transition-colors">
+            <!-- Date -->
+            <td class="text-xs font-black uppercase tracking-wider" style="color:var(--theme-muted)">
+              {{ trade.date | date:'dd MMM yyyy HH:mm' }}
+            </td>
+            <!-- Pair -->
+            <td class="font-black text-sm tracking-wide" style="color:var(--theme-text)">
+              {{ trade.symbol | uppercase }}
+            </td>
+            <!-- Type -->
+            <td>
+              <span class="badge" [class]="trade.type === 'Buy' ? 'badge-buy' : 'badge-sell'">
+                  <i [class]="trade.type === 'Buy' ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down'"></i>
+                  {{ trade.type === 'Buy' ? t('trades.buy') : t('trades.sell') }}
+              </span>
+            </td>
+            <!-- Lots -->
+            <td class="font-mono text-sm font-bold text-end" style="color:var(--theme-muted)">
+              {{ trade.lots | number:'1.2-2' }}
+            </td>
+            <!-- Entry -->
+            <td class="font-mono text-sm font-bold text-end" style="color:var(--theme-text); opacity:0.8">
+              {{ trade.entryPrice | number:'1.2-5' }}
+            </td>
+            <!-- Exit -->
+            <td class="font-mono text-sm font-bold text-end" style="color:var(--theme-text); opacity:0.8">
+              {{ (trade.exitPrice | number:'1.2-5') || '—' }}
+            </td>
+            <!-- Pnl -->
+            <td class="text-end">
+              <span *ngIf="trade.pnl !== undefined" class="font-black text-sm"
+                    [style.color]="trade.pnl >= 0 ? 'var(--green)' : 'var(--red)'">
+                {{ (trade.pnl >= 0 ? '+' : '') + (trade.pnl | currency:'USD') }}
+              </span>
+              <span *ngIf="trade.pnl === undefined" class="badge badge-open">Active</span>
+            </td>
+            <!-- Actions -->
+            <td class="text-center">
+              <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                <button (click)="openModal(trade)" class="p-2 transition-colors" style="color:var(--theme-accent)">
+                  <lucide-angular [img]="icons.Edit2" class="w-4 h-4"></lucide-angular>
+                </button>
+                <button (click)="deleteTrade(trade.id)" class="p-2 transition-colors" style="color:var(--red)">
+                  <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
+                </button>
+              </div>
+            </td>
+          </tr>
+          
+          <tr *ngIf="(filteredTrades$ | async)?.length === 0">
+            <td colspan="8" class="px-6 py-24 text-center">
+              <div class="mx-auto w-20 h-20 rounded-[2rem] flex items-center justify-center mb-6" 
+                   style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+                <lucide-angular [img]="icons.Search" class="w-8 h-8 opacity-10"></lucide-angular>
+              </div>
+              <h3 class="text-lg font-black" style="color:var(--theme-text)">{{ t('common.search') }}</h3>
+              <p class="text-xs uppercase tracking-widest mt-1" style="color:var(--theme-muted)">Try adjusting your filters</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <app-trade-modal *ngIf="showModal" [editTrade]="tradeToEdit" (save)="saveTrade($event)" (close)="closeModal()"></app-trade-modal>
+</div>

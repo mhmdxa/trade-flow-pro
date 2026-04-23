@@ -1,0 +1,111 @@
+<div class="fixed inset-0 z-50 overflow-y-auto animate-fade-in" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity" style="background:rgba(0,0,0,0.8); backdrop-filter:blur(5px)" (click)="onClose()"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    <div class="inline-block align-bottom fn-card text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full p-1 animate-slide-up"
+         style="background:var(--theme-surface); border:1px solid var(--theme-border)">
+      
+      <div class="rounded-2xl px-6 pt-6 pb-8" style="background:var(--theme-surface)">
+        
+        <div class="sm:flex sm:items-start mb-6">
+          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-14 w-14 rounded-full sm:mx-0 sm:h-12 sm:w-12 shadow-gold"
+               style="background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(255,215,0,0.05)); border:1px solid rgba(255,215,0,0.3)">
+            <lucide-angular [img]="editTrade ? icons.Edit2 : icons.Plus" class="h-6 w-6" style="color:#ffd700"></lucide-angular>
+          </div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-5 sm:text-left flex-1" [class.text-end]="i18n.currentLang === 'ar'">
+            <h3 class="text-2xl font-black tracking-tight mt-1" style="color:var(--theme-text)" id="modal-title">
+              {{ editTrade ? t('trades.modal.edit') : t('trades.modal.add') }}
+            </h3>
+          </div>
+        </div>
+        
+        <form [formGroup]="tradeForm" (ngSubmit)="onSubmit()" class="space-y-5" [dir]="i18n.currentLang === 'ar' ? 'rtl' : 'ltr'">
+          <div class="grid grid-cols-2 gap-5">
+            
+            <!-- Type -->
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('trades.col.type') }}</label>
+              <select formControlName="type" class="luxury-input !py-3 font-bold"
+                      [style.color]="tradeForm.value.type === 'Buy' ? 'var(--green)' : 'var(--red)'">
+                <option value="Buy">{{ t('trades.buy') }}</option>
+                <option value="Sell">{{ t('trades.sell') }}</option>
+              </select>
+            </div>
+            
+            <!-- Symbol (Autocompleted) -->
+            <div class="space-y-1.5 relative">
+              <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('trades.modal.symbol') }}</label>
+              <input type="text" formControlName="symbol" list="symbols"
+                     class="luxury-input !py-3 uppercase font-black" placeholder="EURUSD" autocomplete="off">
+              <datalist id="symbols">
+                <option *ngFor="let s of suggestions" [value]="s">{{ s }}</option>
+              </datalist>
+            </div>
+            
+            <!-- Lots -->
+            <div class="space-y-1.5 col-span-2">
+              <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('trades.modal.lots') }}</label>
+              <input type="number" step="0.01" min="0" formControlName="lots" class="luxury-input !py-3 font-mono" placeholder="0.00">
+            </div>
+
+            <!-- Price Grid -->
+            <div class="col-span-2 grid grid-cols-2 gap-5 p-4 rounded-2xl"
+                 style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+              
+              <!-- Entry -->
+              <div class="space-y-1.5">
+                <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('trades.modal.entry') }}</label>
+                <input type="number" step="0.00001" min="0" formControlName="entryPrice" class="luxury-input !py-3 font-mono">
+              </div>
+              
+              <!-- Exit -->
+              <div class="space-y-1.5">
+                <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">
+                  {{ t('trades.modal.exit') }}
+                </label>
+                <input type="number" step="0.00001" min="0" formControlName="exitPrice" class="luxury-input !py-3 font-mono">
+              </div>
+
+              <!-- SL -->
+              <div class="space-y-1.5">
+                <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">Stop Loss</label>
+                <input type="number" step="0.00001" min="0" formControlName="stopLoss" class="luxury-input !py-3 font-mono" style="color:var(--red)">
+              </div>
+              
+              <!-- TP -->
+              <div class="space-y-1.5">
+                <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">Take Profit</label>
+                <input type="number" step="0.00001" min="0" formControlName="takeProfit" class="luxury-input !py-3 font-mono" style="color:var(--green)">
+              </div>
+            </div>
+            
+            <!-- Date -->
+            <div class="col-span-2 space-y-1.5">
+              <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('trades.modal.date') }}</label>
+              <input type="datetime-local" formControlName="date" class="luxury-input !py-3">
+            </div>
+
+            <!-- Notes -->
+            <div class="col-span-2 space-y-1.5">
+              <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('trades.modal.notes') }}</label>
+              <textarea formControlName="notes" rows="2" class="luxury-input !py-3 resize-none" [placeholder]="t('trades.search')"></textarea>
+            </div>
+          </div>
+          
+          <!-- Actions -->
+          <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6"
+               style="border-top:1px solid var(--theme-border)">
+            <button type="button" (click)="onClose()" 
+                    class="btn-ghost w-full sm:w-auto px-6 py-3 font-bold">
+              {{ t('common.cancel') }}
+            </button>
+            <button type="submit" [disabled]="tradeForm.invalid" 
+                    class="btn-gold w-full sm:w-auto px-6 py-3 font-black shadow-gold">
+              {{ t('common.save') }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

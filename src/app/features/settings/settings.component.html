@@ -1,0 +1,271 @@
+<div class="page-container max-w-6xl mx-auto space-y-8 animate-fade-in">
+  
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div>
+      <h1 class="text-4xl font-black tracking-tight" style="color:var(--theme-text)">{{ t('settings.title') }}</h1>
+      <p class="text-base mt-2 font-medium opacity-60">{{ t('app.tagline') }}</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <span *ngIf="saveSuccess" class="text-xs font-bold text-green-500 animate-pulse flex items-center gap-1">
+            <lucide-angular [img]="icons.Check" class="w-4 h-4"></lucide-angular>
+            {{ t('common.success') }}
+        </span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Navigation Sidebar -->
+    <div class="lg:col-span-3 space-y-2">
+      <button *ngFor="let tab of settingsTabs"
+      (click)="setTab(tab.id)"
+      class="w-full flex items-center gap-3 px-6 py-4 rounded-full transition-all font-black text-sm uppercase tracking-wider shadow-sm"
+      [style.background]="activeTab === tab.id ? 'var(--theme-accent)' : 'rgba(255,255,255,0.02)'"
+      [style.color]="activeTab === tab.id ? '#000000' : 'var(--theme-text)'"
+      [style.border]="activeTab === tab.id ? 'none' : '1px solid var(--theme-border)'">
+        <lucide-angular [img]="tab.icon" class="w-5 h-5"></lucide-angular>
+        {{ tab.label }}
+      </button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="lg:col-span-9">
+      <div class="fn-card p-10 min-h-[500px]">
+        
+        <!-- PROFILE TAB -->
+        <div *ngIf="activeTab === 'profile'" class="space-y-8 animate-fade-in">
+            <div class="flex items-center gap-6">
+                <div class="relative group cursor-pointer">
+                    <div class="w-24 h-24 rounded-[2.5rem] bg-gradient-to-tr from-gold to-yellow-600 flex items-center justify-center overflow-hidden shadow-xl">
+                        <lucide-angular [img]="icons.User" class="w-10 h-10 text-white opacity-40"></lucide-angular>
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-opacity">
+                        <lucide-angular [img]="icons.Upload" class="w-6 h-6 text-white"></lucide-angular>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black" style="color:var(--theme-text)">{{ t('settings.profile.pic') }}</h3>
+                    <p class="text-xs font-bold uppercase tracking-widest mt-1 opacity-50">Identity Branding</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ t('settings.profile.fname') }}</label>
+                    <input type="text" [(ngModel)]="settings.firstName" class="luxury-input text-lg font-bold" [placeholder]="t('settings.profile.fname')">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ t('settings.profile.lname') }}</label>
+                    <input type="text" [(ngModel)]="settings.lastName" class="luxury-input text-lg font-bold" [placeholder]="t('settings.profile.lname')">
+                </div>
+                <div class="space-y-2 md:col-span-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ t('auth.login.email') }}</label>
+                    <input type="email" [(ngModel)]="settings.email" class="luxury-input text-lg font-bold" [placeholder]="t('auth.login.email')">
+                </div>
+            </div>
+
+            <div class="pt-6">
+                <button (click)="saveProfile()" class="btn-gold px-8 py-4 text-sm font-black shadow-gold flex items-center gap-2">
+                    <lucide-angular [img]="icons.Zap" class="w-4 h-4"></lucide-angular>
+                    {{ t('common.save') }}
+                </button>
+            </div>
+        </div>
+
+        <!-- APPEARANCE TAB -->
+        <div *ngIf="activeTab === 'appearance'" class="space-y-10 animate-fade-in">
+            <div class="space-y-4">
+                <h3 class="text-xl font-black" style="color:var(--theme-text)">{{ t('settings.appearance.theme') }}</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div *ngFor="let theme of themes" 
+                         (click)="setTheme(theme.id)"
+                         class="cursor-pointer p-1 rounded-2xl border-2 transition-all hover:scale-105"
+                         [style.border-color]="settings.theme === theme.id ? 'var(--theme-accent)' : 'transparent'">
+                        <div class="relative w-full aspect-[16/9] rounded-xl overflow-hidden shadow-md"
+                             [style.background]="theme.preview">
+                             <div class="absolute bottom-2 left-3 text-[10px] font-black text-white mix-blend-overlay">{{ theme.label }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-black" style="color:var(--theme-text)">{{ t('settings.appearance.color') }}</h3>
+                <div class="flex flex-wrap gap-4">
+                    <button *ngFor="let color of [
+                        { id: 'gold', name: 'Imperial Gold', hex: '#ffd700' },
+                        { id: 'blue', name: 'Oceanic Blue', hex: '#3b82f6' },
+                        { id: 'green', name: 'Emerald Forest', hex: '#10b981' },
+                        { id: 'purple', name: 'Royal Purple', hex: '#a855f7' }
+                    ]"
+                    class="flex items-center gap-2 px-5 py-3 rounded-2xl border border-white/5 bg-luxury-surface/5 transition-all hover:bg-luxury-surface/10"
+                    (click)="toast.show(t('alert.theme.changed'), 'info')">
+                        <span class="w-4 h-4 rounded-full shadow-sm" [style.background]="color.hex"></span>
+                        <span class="text-xs font-black uppercase tracking-tight">{{ color.name }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LANGUAGE TAB -->
+        <div *ngIf="activeTab === 'language'" class="space-y-8 animate-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <button *ngFor="let lang of languages"
+                        (click)="setLanguage(lang.code)"
+                        class="p-8 rounded-[2.5rem] flex flex-col items-center gap-4 transition-all hover:scale-105 border-2"
+                        [style.background]="i18n.currentLang === lang.code ? 'var(--theme-accent)' : 'rgba(255,255,255,0.03)'"
+                        [style.border-color]="i18n.currentLang === lang.code ? 'var(--theme-accent)' : 'var(--theme-border)'"
+                        [style.color]="i18n.currentLang === lang.code ? '#000' : 'var(--theme-text)'">
+                    <span class="text-4xl shadow-lg">{{ lang.flag }}</span>
+                    <div class="text-center">
+                        <p class="text-lg font-black">{{ lang.native }}</p>
+                        <p class="text-[10px] font-black uppercase opacity-60 tracking-widest">{{ lang.label }}</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- SECURITY TAB -->
+        <div *ngIf="activeTab === 'security'" class="space-y-10 animate-fade-in">
+            <div class="flex items-start gap-5 p-6 rounded-3xl bg-blue-500/5 border border-blue-500/20">
+                <lucide-angular [img]="icons.Shield" class="w-8 h-8 text-blue-500 mt-1"></lucide-angular>
+                <div>
+                    <h3 class="text-xl font-black text-blue-500">{{ t('settings.tab.security') }}</h3>
+                    <p class="text-sm font-medium opacity-60 mt-1">Institutional grade protection for your trading archives.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black uppercase tracking-widest opacity-40">{{ t('settings.security.password') }}</h4>
+                    <button (click)="changePassword()" class="w-full btn-ghost p-5 rounded-2xl flex items-center justify-between group">
+                        <span class="font-bold">Reset Access Key</span>
+                        <lucide-angular [img]="icons.Zap" class="w-4 h-4 opacity-40 group-hover:opacity-100"></lucide-angular>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black uppercase tracking-widest opacity-40">{{ t('settings.security.2fa') }}</h4>
+                    <div class="flex items-center justify-between p-5 rounded-2xl bg-luxury-surface/[0.02] border border-white/5">
+                        <span class="font-bold">MFA Protection</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" (change)="toggle2FA()" id="mfaToggle">
+                            <label class="toggle-slider" for="mfaToggle"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACCOUNTS TAB -->
+        <div *ngIf="activeTab === 'accounts'" class="space-y-10 animate-fade-in">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-black" style="color:var(--theme-text)">{{ t('settings.tab.accounts') }}</h3>
+                <button (click)="openAddAccount()" class="btn-gold px-5 py-2.5 text-xs font-black flex items-center gap-2">
+                    <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+                    {{ t('accounts.add') }}
+                </button>
+            </div>
+
+            <div class="space-y-4" *ngIf="accounts$ | async as accounts">
+                <div *ngFor="let acc of accounts" 
+                     class="group p-6 rounded-3xl flex items-center justify-between transition-all border border-transparent"
+                     [style.background]="(activeAccountId$ | async) === acc.id ? 'rgba(255,215,0,0.05)' : 'rgba(255,255,255,0.02)'"
+                     [style.border-color]="(activeAccountId$ | async) === acc.id ? 'var(--theme-accent)' : 'var(--theme-border)'">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center bg-luxury-surface/5">
+                            <lucide-angular [img]="icons.CreditCard" class="w-6 h-6" [style.color]="(activeAccountId$ | async) === acc.id ? 'var(--theme-accent)' : 'inherit'"></lucide-angular>
+                        </div>
+                        <div>
+                            <p class="font-black text-lg">{{ acc.name }}</p>
+                            <p class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ acc.type }} — {{ acc.currency }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-right me-4">
+                            <p class="text-lg font-black" [style.color]="(activeAccountId$ | async) === acc.id ? 'var(--theme-accent)' : 'inherit'">{{ acc.balance | currency }}</p>
+                            <p class="text-[9px] font-black uppercase opacity-40 me-1">Current Equity</p>
+                        </div>
+                        <button *ngIf="(activeAccountId$ | async) !== acc.id" 
+                                (click)="switchAccount(acc.id)"
+                                class="p-3 bg-luxury-surface/5 rounded-xl hover:bg-luxury-surface/10 transition-all">
+                            <lucide-angular [img]="icons.Check" class="w-5 h-5"></lucide-angular>
+                        </button>
+                        <button (click)="deleteAccount(acc.id)"
+                                class="p-3 bg-red-500/5 rounded-xl hover:bg-red-500/10 text-red-500 transition-all opacity-0 group-hover:opacity-100">
+                            <lucide-angular [img]="icons.Trash2" class="w-5 h-5"></lucide-angular>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATA TAB -->
+        <div *ngIf="activeTab === 'data'" class="space-y-12 animate-fade-in">
+            <div class="p-8 rounded-[2.5rem] bg-amber-500/5 border border-amber-500/10 flex flex-col md:flex-row items-center gap-8">
+                <lucide-angular [img]="icons.Download" class="w-12 h-12 text-amber-500"></lucide-angular>
+                <div class="flex-1 text-center md:text-left">
+                    <h3 class="text-xl font-black text-amber-500">Cloud Export Subsystem</h3>
+                    <p class="text-sm opacity-60 mt-2">Generate a portable JSON archive of all your trades, journals, and local metadata for external analysis or migration.</p>
+                </div>
+                <button (click)="exportAllData()" class="btn-gold px-10 py-5 font-black uppercase tracking-widest text-sm shadow-gold">
+                    Execute Archive
+                </button>
+            </div>
+
+            <div class="p-8 rounded-[2.5rem] bg-red-500/5 border border-red-500/10">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <lucide-angular [img]="icons.Trash2" class="w-12 h-12 text-red-500"></lucide-angular>
+                    <div class="flex-1 text-center md:text-left">
+                        <h3 class="text-xl font-black text-red-500">Master Sequence Reset</h3>
+                        <p class="text-sm opacity-60 mt-2">DANGER: This action is irreversible. All local storage buffers will be purged, erasing every documented trade and strategy playbook.</p>
+                    </div>
+                    <button (click)="deleteAllData()" class="px-8 py-4 rounded-2xl bg-red-500 text-white font-black uppercase text-xs tracking-widest hover:bg-red-600 transition-all">
+                        Purge All Records
+                    </button>
+                </div>
+            </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Account Modal -->
+<div *ngIf="showAccountModal" class="modal-overlay">
+  <div class="modal-box max-w-lg p-10">
+    <div class="flex justify-between items-center mb-8">
+      <h3 class="text-2xl font-black">{{ t('accounts.add') }}</h3>
+      <button (click)="closeAddAccount()" class="p-2 opacity-50 hover:opacity-100"><lucide-angular [img]="icons.Plus" class="w-6 h-6 rotate-45"></lucide-angular></button>
+    </div>
+    
+    <div class="space-y-6">
+      <div class="space-y-2">
+        <label class="text-xs font-black uppercase opacity-40">{{ t('accounts.name') }}</label>
+        <input type="text" [(ngModel)]="newAccount.name" class="luxury-input text-lg font-bold" placeholder="E.g. Prop Firm Phase 1">
+      </div>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-xs font-black uppercase opacity-40">{{ t('accounts.balance') }}</label>
+          <input type="number" [(ngModel)]="newAccount.balance" class="luxury-input text-lg font-bold" placeholder="100,000">
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs font-black uppercase opacity-40">{{ t('accounts.type') }}</label>
+          <select [(ngModel)]="newAccount.type" class="luxury-input text-lg font-bold">
+            <option value="demo">Demo</option>
+            <option value="live">Live</option>
+            <option value="prop">Prop Firm</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="pt-6">
+        <button (click)="saveNewAccount()" class="w-full btn-gold py-5 text-base font-black shadow-gold flex items-center justify-center gap-3">
+          <lucide-angular [img]="icons.Plus" class="w-5 h-5"></lucide-angular>
+          Initialize Account
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

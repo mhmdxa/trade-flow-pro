@@ -1,0 +1,71 @@
+<div class="flex flex-col h-full space-y-6 lg:space-y-8 px-1 pb-10">
+
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+    <h1 class="text-3xl font-extrabold text-white text-white tracking-tight">Intelligence Reports</h1>
+    <p class="text-sm text-gray-500 mt-1 uppercase tracking-widest hidden sm:block">Archive & Export Engine</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+    
+    <!-- Weekly Report Card -->
+    <div class="glass-card p-8 md:p-10 flex flex-col justify-center items-center text-center relative overflow-hidden group">
+      <div class="absolute -left-10 top-1/2 -translate-y-1/2 w-48 h-48 bg-luxury-gold/5 rounded-full blur-3xl pointer-events-none group-hover:bg-luxury-gold/10 transition-all text-center"></div>
+      
+      <div class="p-6 bg-gray-50/50 dark:bg-luxury-surface/50 rounded-full mb-6 border border-gray-100 dark:border-luxury-border shadow-glow">
+        <lucide-angular [img]="icons.FileText" class="h-10 w-10 text-luxury-gold"></lucide-angular>
+      </div>
+      
+      <h3 class="text-2xl font-extrabold text-white text-white mb-2">Weekly Performance</h3>
+      <p class="text-gray-500 mb-8 max-w-sm">Generate a comprehensive summary of your trading activities for the current week. Recommended for weekend reviews.</p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 w-full justify-center relative z-10">
+        <button (click)="generateWeeklyPdf()" [disabled]="isGenerating" class="btn-gold disabled:opacity-50 flex items-center justify-center gap-2 px-6 py-3.5 flex-1 max-w-[200px]">
+          <lucide-angular [img]="icons.Download" class="w-5 h-5 text-[#050811]"></lucide-angular>
+          <span class="font-bold text-[#050811]">Export PDF</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Monthly Report Card -->
+    <div class="glass-card p-8 md:p-10 flex flex-col justify-center items-center text-center relative overflow-hidden group">
+      <div class="absolute -right-10 top-1/2 -translate-y-1/2 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/10 transition-all"></div>
+      
+      <div class="p-6 bg-gray-50/50 dark:bg-luxury-surface/50 rounded-full mb-6 border border-gray-100 dark:border-luxury-border shadow-glow">
+        <lucide-angular [img]="icons.Calendar" class="h-10 w-10 text-blue-500"></lucide-angular>
+      </div>
+      
+      <h3 class="text-2xl font-extrabold text-white text-white mb-2">Monthly Statement</h3>
+      <p class="text-gray-500 mb-8 max-w-sm">A deep dive into your monthly equity curve, win rates, and emotional journal correlations. Perfect for macro reflections.</p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 w-full justify-center relative z-10">
+        <button (click)="generateMonthlyPdf()" [disabled]="isGenerating" class="btn-gold disabled:opacity-50 flex items-center justify-center gap-2 px-6 py-3.5 flex-1 max-w-[200px] !bg-blue-600 hover:!bg-blue-500 !text-white shadow-[0_4px_14px_0_rgba(37,99,235,0.39)]">
+          <lucide-angular [img]="icons.Download" class="w-5 h-5"></lucide-angular>
+          <span class="font-bold">Export PDF</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Raw Data Export -->
+  <div class="glass-card p-8 md:p-10 relative overflow-hidden group mt-6">
+    <div class="absolute inset-0 bg-luxury-gold/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+      <div class="flex items-center gap-6">
+        <div class="p-5 bg-green-500/10 rounded-full border border-green-500/20">
+           <lucide-angular [img]="icons.Download" class="h-8 w-8 text-green-500"></lucide-angular>
+        </div>
+        <div>
+          <h3 class="text-xl font-extrabold text-white text-white mb-1">Raw Database Export</h3>
+          <p class="text-gray-500">Download every single trade record, complete with notes, timestamps, and strategies in raw Excel format.</p>
+        </div>
+      </div>
+      
+      <button (click)="exportAllDataExcel()" class="btn-gold-outline flex items-center justify-center gap-2 px-8 py-4 whitespace-nowrap !border-green-500 !text-green-500 hover:!bg-green-500 hover:!text-white hover:border-transparent">
+        <lucide-angular [img]="icons.Download" class="w-5 h-5"></lucide-angular>
+        <span class="font-bold text-lg">Download .XLSX</span>
+      </button>
+    </div>
+  </div>
+
+</div>

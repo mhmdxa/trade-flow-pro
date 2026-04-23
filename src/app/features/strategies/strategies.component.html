@@ -1,0 +1,140 @@
+<div class="page-container space-y-8 animate-fade-in">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+    <div>
+      <h1 class="text-4xl font-black tracking-tight" style="color:var(--theme-text)">{{ t('nav.strategies') }}</h1>
+      <p class="text-base mt-2 font-medium" style="color:var(--theme-muted)">{{ t('strategies.subtitle') }}</p>
+    </div>
+    <button (click)="openModal()" class="btn-gold flex items-center gap-3 px-8 py-4 text-base font-black group shadow-gold transition-all hover:scale-105">
+      <lucide-angular [img]="icons.Plus" class="w-5 h-5 transition-transform group-hover:rotate-90"></lucide-angular>
+      {{ t('strategies.add') }}
+    </button>
+  </div>
+
+  <!-- Filters Bar -->
+  <div class="fn-card p-5 flex flex-col lg:flex-row gap-6 items-center shadow-lg" style="background:rgba(255,255,255,0.02)">
+    <!-- Search -->
+    <div class="relative flex-1 w-full">
+      <lucide-angular [img]="icons.Search" class="absolute w-5 h-5 top-1/2 -translate-y-1/2 start-4 opacity-40" style="color:var(--theme-text)"></lucide-angular>
+      <input
+        [(ngModel)]="searchText"
+        (ngModelChange)="onSearch()"
+        [placeholder]="t('trades.search')"
+        class="luxury-input !ps-12 !py-4 font-bold text-lg"
+      />
+    </div>
+    <!-- Type Filters -->
+    <div class="flex gap-3 flex-wrap items-center">
+      <span class="text-xs font-black uppercase tracking-widest me-2" style="color:var(--theme-muted)">Filter By:</span>
+      <button *ngFor="let type of types"
+              (click)="onTypeFilter(type)"
+              class="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-tighter transition-all border border-transparent"
+              [style.background]="typeFilter === type ? 'var(--theme-accent)' : 'rgba(255,255,255,0.03)'"
+              [style.color]="typeFilter === type ? (i18n.currentLang === 'ar' ? '#000' : '#000') : 'var(--theme-muted)'"
+              [style.border-color]="typeFilter === type ? 'transparent' : 'var(--theme-border)'">
+        {{ type === 'All' ? t('common.all') : type }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Strategies Content -->
+  <ng-container *ngIf="filteredStrategies$ | async as strategies">
+
+    <!-- Empty State -->
+    <div *ngIf="strategies.length === 0" class="fn-card p-24 text-center border-dashed border-2">
+      <div class="w-24 h-24 bg-gold/10 rounded-[3rem] flex items-center justify-center mx-auto mb-8">
+        <lucide-angular [img]="icons.BookOpen" class="w-10 h-10" style="color:var(--theme-accent)"></lucide-angular>
+      </div>
+      <h3 class="text-2xl font-black mb-3" style="color:var(--theme-text)">{{ t('strategies.empty') }}</h3>
+      <p class="text-base mb-8 max-w-md mx-auto" style="color:var(--theme-muted)">{{ t('strategies.emptyHint') }}</p>
+      <button (click)="openModal()" class="btn-gold px-8 py-4 text-sm font-black">{{ t('strategies.add') }}</button>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div *ngFor="let strategy of strategies; let i = index"
+           class="fn-card flex flex-col group animate-fade-in overflow-hidden shadow-xl"
+           [class]="'animate-d' + (i < 5 ? (i + 1) : 5)"
+           style="background:rgba(255,255,255,0.01)">
+
+        <!-- Enhanced Card Header -->
+        <div class="p-8 pb-4 flex items-start justify-between bg-gradient-to-b from-white/[0.02] to-transparent">
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg"
+                    [style.background]="getTypeColor(strategy.type) + '15'"
+                    [style.color]="getTypeColor(strategy.type)">
+                <span class="w-1.5 h-1.5 rounded-full" [style.background]="getTypeColor(strategy.type)"></span>
+                {{ strategy.type }}
+              </span>
+              <span class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg"
+                    style="background:rgba(255,255,255,0.06); color:var(--theme-text)">
+                {{ strategy.timeframe }}
+              </span>
+            </div>
+            <h3 class="text-2xl font-black leading-tight" style="color:var(--theme-text)">{{ strategy.name }}</h3>
+          </div>
+          
+          <!-- Quick Labels (Win Rate / RR) -->
+          <div class="flex flex-col items-end gap-3">
+             <div class="flex gap-2">
+                <div class="px-4 py-2 rounded-2xl text-center min-w-[70px] shadow-sm" style="background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.2)">
+                    <span class="block text-sm font-black" style="color:var(--green)">{{ strategy.winRate || '0' }}%</span>
+                    <span class="block text-[8px] font-black uppercase opacity-60" style="color:var(--green)">{{ t('strategies.winRate') }}</span>
+                </div>
+                <div class="px-4 py-2 rounded-2xl text-center min-w-[70px] shadow-sm" style="background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.2)">
+                    <span class="block text-sm font-black" style="color:var(--theme-accent)">{{ strategy.riskReward || '0.0' }}</span>
+                    <span class="block text-[8px] font-black uppercase opacity-60" style="color:var(--theme-accent)">RR</span>
+                </div>
+             </div>
+             <!-- Actions (Visible on hover) -->
+             <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                <button (click)="openModal(strategy)" class="p-3 rounded-xl bg-luxury-surface/5 hover:bg-luxury-surface/10 text-accent transition-all">
+                  <lucide-angular [img]="icons.Edit2" class="w-5 h-5"></lucide-angular>
+                </button>
+                <button (click)="deleteStrategy(strategy.id)" class="p-3 rounded-xl bg-red-500/5 hover:bg-red-500/10 text-red-500 transition-all">
+                  <lucide-angular [img]="icons.Trash2" class="w-5 h-5"></lucide-angular>
+                </button>
+             </div>
+          </div>
+        </div>
+
+        <div class="p-8 pt-4 space-y-6">
+            <!-- Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Indicators -->
+                <div *ngIf="strategy.indicators" class="p-5 rounded-2xl bg-luxury-surface/[0.03] space-y-2">
+                    <p class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ t('strategies.indicators') }}</p>
+                    <p class="text-sm font-bold leading-relaxed">{{ strategy.indicators }}</p>
+                </div>
+                <!-- Entry Rules -->
+                <div *ngIf="strategy.entryRules" class="p-5 rounded-2xl space-y-2" style="background:rgba(0,255,136,0.03); border:1px solid rgba(0,255,136,0.1)">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-green-500">{{ t('strategies.entry') }}</p>
+                    </div>
+                    <p class="text-sm font-medium leading-relaxed">{{ strategy.entryRules }}</p>
+                </div>
+                <!-- Exit Rules -->
+                <div *ngIf="strategy.exitRules" class="p-5 rounded-2xl space-y-2" style="background:rgba(255,68,68,0.03); border:1px solid rgba(255,68,68,0.1)">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-red-500">{{ t('strategies.exit') }}</p>
+                    </div>
+                    <p class="text-sm font-medium leading-relaxed">{{ strategy.exitRules }}</p>
+                </div>
+                <!-- Notes -->
+                <div *ngIf="strategy.notes" class="p-5 rounded-2xl bg-luxury-surface/[0.03] space-y-2 border border-white/5">
+                    <p class="text-[10px] font-black uppercase tracking-widest opacity-40">{{ t('strategies.notes') }}</p>
+                    <p class="text-sm italic opacity-70 leading-relaxed">{{ strategy.notes }}</p>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<!-- Modal -->
+<app-strategy-modal *ngIf="showModal" [editStrategy]="strategyToEdit" (save)="saveStrategy($event)" (close)="closeModal()"></app-strategy-modal>

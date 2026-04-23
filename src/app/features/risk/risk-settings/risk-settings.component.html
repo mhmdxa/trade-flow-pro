@@ -1,0 +1,131 @@
+<div class="page-container min-h-full animate-fade-in" style="color:var(--theme-text)">
+
+  <!-- ===================== HEADER ===================== -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+    <div>
+      <h1 class="text-3xl font-black tracking-tight" style="color:#ffffff">{{ t('risk.title') }}</h1>
+      <p class="mt-1 text-sm font-bold uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('risk.subtitle') }}</p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <div *ngIf="showSuccess" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest animate-fade-in"
+           style="background:rgba(0,255,136,0.1); color:#00ff88; border:1px solid rgba(0,255,136,0.2)">
+        <i class="fa-solid fa-circle-check me-2"></i>Protection Configured
+      </div>
+      <button (click)="saveSettings()" [disabled]="riskForm.invalid"
+              class="flex items-center gap-2 px-8 py-3.5 btn-gold rounded-2xl group shadow-gold disabled:opacity-50">
+        <lucide-angular [img]="icons.Save" class="w-4 h-4 transition-transform group-hover:scale-110" style="color:#0a0a2a"></lucide-angular>
+        <span class="font-black text-sm uppercase tracking-widest" style="color:#0a0a2a">{{ t('risk.saveSettings') }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in animate-d1">
+    
+    <!-- ── FORM SECTION ── -->
+    <div class="fn-card p-8" style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+      <form [formGroup]="riskForm" (ngSubmit)="saveSettings()" class="space-y-8">
+        
+        <!-- Balance -->
+        <div class="space-y-2">
+          <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('risk.initialBalance') }}</label>
+          <div class="relative">
+            <i class="fa-solid fa-sack-dollar absolute left-4 top-1/2 -translate-y-1/2 opacity-20"></i>
+            <input type="number" formControlName="initialBalance" class="luxury-input !ps-12 !py-4 font-black text-lg" placeholder="0.00">
+          </div>
+          <p class="text-[9px] font-bold uppercase tracking-widest opacity-40">Your starting capital or prop firm evaluation size</p>
+        </div>
+
+        <!-- Limits Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('risk.dailyLoss') }}</label>
+            <div class="relative">
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 font-black opacity-20">%</span>
+              <input type="number" formControlName="dailyLossLimitPercent" class="luxury-input !py-4 font-black text-lg" placeholder="5">
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('risk.maxDrawdown') }}</label>
+            <div class="relative">
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 font-black opacity-20">%</span>
+              <input type="number" formControlName="maxDrawdownLimitPercent" class="luxury-input !py-4 font-black text-lg" placeholder="10">
+            </div>
+          </div>
+        </div>
+
+        <!-- Position Risk -->
+        <div class="p-6 rounded-2xl border border-dashed border-white/10" style="background:rgba(255,255,255,0.01)">
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-accent)">{{ t('risk.riskPerTrade') }}</label>
+            <div class="relative">
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 font-black opacity-40 text-var(--theme-accent)">%</span>
+              <input type="number" formControlName="riskPerTradePercent" class="luxury-input !py-4 font-black text-lg border-accent/40" style="color:var(--theme-accent)">
+            </div>
+            <p class="text-[9px] font-bold uppercase tracking-widest opacity-40 mt-2">Recommended for funded evaluations: 0.5% — 1.0%</p>
+          </div>
+        </div>
+
+        <!-- Enter key to submit hint -->
+        <div class="text-[9px] font-black uppercase tracking-widest opacity-20 text-center">
+          Press <span class="px-1.5 py-0.5 border border-white/20 rounded">Enter</span> to commit configuration
+        </div>
+
+      </form>
+    </div>
+
+    <!-- ── PROJECTIONS / INFO ── -->
+    <div class="space-y-6">
+      
+      <div class="fn-card p-8 group" style="background:linear-gradient(135deg,rgba(0,255,136,0.05),transparent); border:1px solid var(--theme-border)">
+        <div class="flex items-start justify-between mb-6">
+          <div>
+            <h4 class="font-black text-white uppercase tracking-widest text-xs mb-1">Safety Parameters</h4>
+            <p class="text-[10px] opacity-40 font-bold">Calculation based on your configuration</p>
+          </div>
+          <i class="fa-solid fa-shield-heart text-2xl text-green-400 opacity-20 transition-all group-hover:scale-125 group-hover:opacity-60"></i>
+        </div>
+        
+        <div class="space-y-6">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-bold opacity-60">Daily Loss Soft-Cap</span>
+            <span class="text-lg font-black text-white">
+              {{ (riskForm.value.initialBalance * (riskForm.value.dailyLossLimitPercent / 100)) | currency:'USD' }}
+            </span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-bold opacity-60">Hard Drawdown Stop</span>
+            <span class="text-lg font-black text-white">
+              {{ (riskForm.value.initialBalance * (riskForm.value.maxDrawdownLimitPercent / 100)) | currency:'USD' }}
+            </span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-bold text-accent">Position Risk Amount</span>
+            <span class="text-lg font-black text-accent">
+              {{ (riskForm.value.initialBalance * (riskForm.value.riskPerTradePercent / 100)) | currency:'USD' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fn-card p-8 group" style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-gold" 
+               style="background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.2)">
+            <i class="fa-solid fa-user-shield text-var(--theme-accent)"></i>
+          </div>
+          <div>
+            <h4 class="font-black text-white uppercase tracking-widest text-xs">Prop Firm Integrity</h4>
+            <p class="text-[10px] opacity-40 font-bold">Automatic protection engine active</p>
+          </div>
+        </div>
+        <p class="text-sm opacity-60 leading-relaxed italic">
+          "The engine will flag and lock the dashboard if your equity breaches the configured parameters. Ensure your MT5 sync is active for real-time monitoring."
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+</div>

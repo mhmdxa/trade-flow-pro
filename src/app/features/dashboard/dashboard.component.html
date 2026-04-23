@@ -1,0 +1,295 @@
+<div class="page-container min-h-full animate-fade-in" style="color:var(--theme-text)">
+
+  <!-- ===================== ROYAL HEADER ===================== -->
+  <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 mb-8 animate-fade-in">
+    <div class="flex items-center gap-5">
+      <!-- Institutional Logo -->
+      <div class="w-16 h-16 shrink-0 shadow-gold rounded-2xl p-2" 
+           style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)"
+           [innerHTML]="i18n.currentLang === 'ar' ? '' : ''">
+           <!-- Handled by asset-data injection in TS or just direct SVG in HTML for speed -->
+           <div class="w-full h-full" style="color:var(--theme-accent)">
+             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path d="M50 5L15 25V75L50 95L85 75V25L50 5Z" stroke="currentColor" stroke-width="2" />
+               <path d="M50 15L25 30V70L50 85L75 70V30L50 15Z" fill="var(--theme-accent)" fill-opacity="0.2" />
+               <path d="M40 45L50 35L60 45M40 55L50 65L60 55" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+             </svg>
+           </div>
+      </div>
+      
+      <div>
+        <h1 class="text-3xl font-black tracking-tight" style="color:#ffffff">
+          {{ t('nav.dashboard') }}, <ng-container *ngIf="currentUser$ | async as user">
+            <span style="color:var(--theme-accent)">{{ user.firstName }}</span>
+          </ng-container>
+        </h1>
+        <p class="mt-1 text-sm font-bold uppercase tracking-widest" style="color:var(--theme-muted)">
+          {{ t('app.tagline') }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Countdown & Actions -->
+    <div class="flex flex-wrap items-center gap-4">
+      <div class="flex items-center gap-3 px-5 py-3 rounded-2xl shadow-gold animate-pulse-glow"
+           style="background:rgba(255,215,0,0.06); border:1px solid rgba(255,215,0,0.2)">
+        <i class="fa-solid fa-clock-rotate-left" style="color:var(--theme-accent)"></i>
+        <span class="font-mono font-black text-lg" style="color:var(--theme-accent); letter-spacing:0.1em">{{ countdown }}</span>
+        <span class="text-[10px] font-black uppercase tracking-wider" style="color:var(--theme-muted)">{{ t('dash.countdown') }}</span>
+      </div>
+      
+      <button class="btn-gold px-6 py-3 shrink-0 flex items-center gap-2">
+        <i class="fa-solid fa-file-export"></i>
+        {{ t('common.export') }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== STAT CARDS (GAP-6) ===================== -->
+  <ng-container *ngIf="(balance$ | async) as balance">
+    <ng-container *ngIf="(riskSettings$ | async) as settings">
+      <ng-container *ngIf="(dailyLoss$ | async) as dailyLoss">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8 animate-fade-in animate-d1">
+          
+          <!-- Card 1: Balance (P-6) -->
+          <div class="fn-card p-6 card-3d group"
+               style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+            <div class="flex items-center justify-between mb-5">
+              <span class="text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('dash.balance') }}</span>
+              <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:rotate-12" 
+                   style="background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.2)">
+                <i class="fa-solid fa-crown" style="color:var(--theme-accent)"></i>
+              </div>
+            </div>
+            <div class="text-4xl font-black mb-3 tracking-tighter" style="color:#ffffff">
+              {{ balance | currency:'USD':'symbol':'1.0-0' }}
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="badge badge-profit py-1">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                +{{ (balance - settings.initialBalance) | currency:'USD':'symbol':'1.0-0' }}
+              </span>
+              <span class="text-[10px] font-bold" style="color:var(--theme-muted)">Total Growth</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Profit Target (P-6) -->
+          <div class="fn-card p-6 card-3d group"
+               style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+            <div class="flex items-center justify-between mb-5">
+              <span class="text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('dash.dailyTarget') }}</span>
+              <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110" 
+                   style="background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.2)">
+                <i class="fa-solid fa-bullseye" style="color:#00ff88"></i>
+              </div>
+            </div>
+            <div class="text-4xl font-black mb-1 tracking-tighter" style="color:#ffffff">
+              {{ target | currency:'USD':'symbol':'1.0-0' }}
+            </div>
+            <div class="w-full h-2 rounded-full mt-4 mb-2" style="background:rgba(255,255,255,0.06)">
+              <div class="h-full rounded-full transition-all duration-1000 shadow-green"
+                   style="background:linear-gradient(90deg,#00ff88,#00cc66)"
+                   [style.width.%]="getTargetPct(balance, settings)"></div>
+            </div>
+            <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+              <span style="color:#00ff88">{{ getTargetPct(balance, settings) | number:'1.0-1' }}% achieved</span>
+              <span style="color:var(--theme-muted)">Goal</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Daily Limit (P-6) -->
+          <div class="fn-card p-6 card-3d group"
+               style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+            <div class="flex items-center justify-between mb-5">
+              <span class="text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('dash.remainingLimit') }}</span>
+              <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0" 
+                   style="background:rgba(255,68,68,0.1); border:1px solid rgba(255,68,68,0.2)">
+                <i class="fa-solid fa-shield-virus" style="color:#ff4444"></i>
+              </div>
+            </div>
+            <div class="text-4xl font-black mb-1 tracking-tighter" style="color:#ffffff">
+              {{ (getDailyLossLimit(settings) - dailyLoss) | currency:'USD':'symbol':'1.0-0' }}
+            </div>
+            <div class="w-full h-2 rounded-full mt-4 mb-2" style="background:rgba(255,255,255,0.06)">
+              <div class="h-full rounded-full transition-all duration-1000 shadow-red" 
+                   style="background:linear-gradient(90deg,#ff4444,#ff6666)"
+                   [style.width.%]="100 - getDailyLossPct(dailyLoss, settings)"></div>
+            </div>
+            <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+              <span style="color:#ff4444">Daily Safety Buffer</span>
+              <span style="color:var(--theme-muted)">{{ getDailyLossPct(dailyLoss, settings) | number:'1.0-0' }}% Used</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Drawdown (P-6) -->
+          <div class="fn-card p-6 card-3d group"
+               style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+            <div class="flex items-center justify-between mb-5">
+              <span class="text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">{{ t('dash.drawdown') }}</span>
+              <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0" 
+                   style="background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.2)">
+                <i class="fa-solid fa-chart-line-down" style="color:var(--theme-accent)"></i>
+              </div>
+            </div>
+            <div class="text-4xl font-black mb-1 tracking-tighter" style="color:#ffffff">
+              {{ getDrawdownPct(balance, settings) | number:'1.1-1' }}%
+            </div>
+            <div class="w-full h-2 rounded-full mt-4 mb-2" style="background:rgba(255,255,255,0.06)">
+              <div class="h-full rounded-full transition-all duration-1000 shadow-gold" 
+                   style="background:linear-gradient(90deg,var(--theme-accent),var(--theme-accent2))"
+                   [style.width.%]="getDrawdownPct(balance, settings)"></div>
+            </div>
+            <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+              <span style="color:var(--theme-accent)">Max Allowed: {{ settings.maxDrawdownLimitPercent }}%</span>
+              <span style="color:var(--theme-muted)">Current DD</span>
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <!-- ===================== CHART & RISK (GAP-6) ===================== -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 animate-fade-in animate-d2">
+    
+    <!-- Equity Curve -->
+    <div class="xl:col-span-2 fn-card p-8"
+         style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h3 class="font-black text-xl" style="color:#ffffff">{{ t('dash.equityCurve') }}</h3>
+          <p class="text-xs mt-1 uppercase tracking-widest font-bold" style="color:var(--theme-muted)">Institutional Performance Tracking</p>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-green"
+             style="background:rgba(0,255,136,0.05); color:#00ff88; border:1px solid rgba(0,255,136,0.2)">
+          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+          Live Feed
+        </div>
+      </div>
+      <div class="relative h-[320px] w-full">
+        <canvas #equityChartCanvas></canvas>
+      </div>
+    </div>
+
+    <!-- Risk Panel -->
+    <div class="fn-card p-8 flex flex-col gap-6"
+         style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+      <h3 class="font-black text-xl flex items-center gap-3" style="color:#ffffff">
+        <i class="fa-solid fa-building-columns" style="color:var(--theme-accent)"></i>
+        Risk Matrix
+      </h3>
+      
+      <ng-container *ngIf="(riskSettings$ | async) as s">
+        <div class="space-y-8 flex-1 mt-4">
+          <!-- Profit Item -->
+          <div>
+            <div class="flex justify-between text-[11px] mb-2 font-black uppercase tracking-widest">
+              <span style="color:var(--theme-muted)">{{ t('dash.dailyTarget') }}</span>
+              <span style="color:#00ff88" *ngIf="balance$ | async as b">{{ getTargetPct(b, s) | number:'1.0-0' }}%</span>
+            </div>
+            <div class="h-2.5 rounded-full" style="background:rgba(255,255,255,0.04)">
+              <div class="h-full rounded-full transition-all duration-1000 shadow-green" style="background:linear-gradient(90deg,#00ff88,#00cc66)"
+                   [style.width.%]="getTargetPct((balance$ | async) || s.initialBalance, s)"></div>
+            </div>
+          </div>
+          
+          <!-- Loss Item -->
+          <div>
+            <div class="flex justify-between text-[11px] mb-2 font-black uppercase tracking-widest">
+              <span style="color:var(--theme-muted)">{{ t('dash.dailyLimit') }}</span>
+              <span style="color:#ff4444" *ngIf="dailyLoss$ | async as dl">{{ getDailyLossPct(dl, s) | number:'1.0-0' }}%</span>
+            </div>
+            <div class="h-2.5 rounded-full" style="background:rgba(255,255,255,0.04)">
+              <div class="h-full rounded-full transition-all duration-1000 shadow-red" style="background:linear-gradient(90deg,#ff4444,#ff6666)"
+                   [style.width.%]="getDailyLossPct((dailyLoss$ | async) || 0, s)"></div>
+            </div>
+          </div>
+          
+          <!-- DD Item -->
+          <div>
+            <div class="flex justify-between text-[11px] mb-2 font-black uppercase tracking-widest">
+              <span style="color:var(--theme-muted)">Account {{ t('dash.drawdown') }}</span>
+              <span style="color:var(--theme-accent)" *ngIf="balance$ | async as b">{{ getDrawdownPct(b, s) | number:'1.1-1' }}%</span>
+            </div>
+            <div class="h-2.5 rounded-full" style="background:rgba(255,255,255,0.04)">
+              <div class="h-full rounded-full transition-all duration-1000 shadow-gold" style="background:linear-gradient(90deg,var(--theme-accent),var(--theme-accent2))"
+                   [style.width.%]="getDrawdownPct((balance$ | async) || s.initialBalance, s)"></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="w-full py-4 mt-6 rounded-2xl font-black uppercase tracking-widest text-xs btn-gold-outline">
+          Advanced Risk Suite
+        </button>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- ===================== RECENT TRADES (GAP-6) ===================== -->
+  <div class="fn-card overflow-hidden animate-fade-in animate-d3"
+       style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+    <div class="flex items-center justify-between px-8 py-6" style="border-bottom:1px solid var(--theme-border)">
+      <h3 class="font-black text-xl" style="color:#ffffff">{{ t('dash.recentTrades') }}</h3>
+      <a routerLink="/trades" class="text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-full no-underline transition-all hover:scale-105 shadow-gold"
+         style="color:var(--theme-accent); border:1px solid var(--theme-accent); background:rgba(255,215,0,0.05)">
+        Review History <i class="fa-solid fa-chevron-right ms-2"></i>
+      </a>
+    </div>
+    
+    <div class="table-scroll">
+      <table class="trade-table w-full">
+        <thead>
+          <tr style="background:rgba(0,0,0,0.2)">
+            <th>{{ t('trades.col.symbol') }}</th>
+            <th>{{ t('trades.col.type') }}</th>
+            <th style="text-align:end">{{ t('trades.col.entry') }}</th>
+            <th style="text-align:end">{{ t('trades.col.pnl') }}</th>
+            <th style="text-align:end">{{ t('trades.col.date') }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr *ngFor="let trade of recentTrades$ | async; let i = index" class="hover:bg-luxury-surface/5 transition-colors">
+            <!-- Symbol -->
+            <td class="font-black text-sm tracking-wide" style="color:#ffffff">
+              {{ trade.symbol | uppercase }}
+            </td>
+            <!-- Type -->
+            <td>
+              <span class="badge" [class]="trade.type === 'Buy' ? 'badge-buy' : 'badge-sell'">
+                  <i [class]="trade.type === 'Buy' ? 'fa-solid fa-caret-up' : 'fa-solid fa-caret-down'"></i>
+                  {{ trade.type === 'Buy' ? t('trades.buy') : t('trades.sell') }}
+              </span>
+            </td>
+            <!-- Entry -->
+            <td class="font-mono text-sm font-bold" style="color:rgba(255,255,255,0.7); text-align:end">
+              {{ trade.entryPrice | number:'1.2-5' }}
+            </td>
+            <!-- Pnl -->
+            <td style="text-align:end">
+              <span class="font-black text-sm"
+                    [style.color]="(trade.pnl || 0) >= 0 ? '#00ff88' : '#ff4444'">
+                {{ (trade.pnl || 0) >= 0 ? '+' : '' }}{{ trade.pnl | currency:'USD' }}
+              </span>
+            </td>
+            <!-- Date -->
+            <td class="text-[11px] font-black uppercase tracking-wider" style="color:var(--theme-muted); text-align:end">
+              {{ trade.date | date:'dd MMM' }}
+            </td>
+          </tr>
+          
+          <tr *ngIf="(recentTrades$ | async)?.length === 0">
+            <td colspan="5" class="px-6 py-20 text-center">
+              <div class="mx-auto w-16 h-16 rounded-3xl flex items-center justify-center mb-4" 
+                   style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+                <i class="fa-solid fa-folder-open text-3xl opacity-20"></i>
+              </div>
+              <p class="font-black uppercase tracking-widest text-[10px]" style="color:var(--theme-muted)">Portfolio Vacant</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

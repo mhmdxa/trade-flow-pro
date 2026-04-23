@@ -1,0 +1,68 @@
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(75, 85, 99, 0.5);
+}
+
+/* Beautiful Ambient Background mimicking 3D */
+.ambient-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.spotlight {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.15;
+  animation: float 20s infinite ease-in-out;
+}
+
+.spotlight-1 {
+  width: 40vw;
+  height: 40vw;
+  background: #3b82f6;
+  top: -10vw;
+  left: -10vw;
+  animation-delay: 0s;
+}
+
+.spotlight-2 {
+  width: 35vw;
+  height: 35vw;
+  background: #a855f7;
+  bottom: -5vw;
+  right: -10vw;
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(5vw, 10vh);
+  }
+  50% {
+    transform: translate(-5vw, 5vh);
+  }
+  75% {
+    transform: translate(-10vw, -5vh);
+  }
+}

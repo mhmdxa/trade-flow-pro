@@ -1,0 +1,133 @@
+<div class="page-container min-h-full animate-fade-in" style="color:var(--theme-text)">
+
+  <!-- ===================== HEADER ===================== -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+    <div>
+      <h1 class="text-3xl font-black tracking-tight" style="color:#ffffff">Performance Analytics</h1>
+      <p class="mt-1 text-sm font-bold uppercase tracking-widest" style="color:var(--theme-muted)">Institutional Grade Metrics & Statistics</p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <button class="btn-ghost px-5 py-3 rounded-2xl flex items-center gap-2 text-xs font-black uppercase tracking-widest">
+        <lucide-angular [img]="icons.Info" class="w-4 h-4"></lucide-angular>
+        Calculation Methodology
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== TOP STATS (GAP-6, P-6) ===================== -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in animate-d1">
+    
+    <div class="fn-card p-6 card-3d group" style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">Win Rate</span>
+        <i class="fa-solid fa-trophy text-var(--theme-accent) opacity-20"></i>
+      </div>
+      <div class="text-3xl font-black text-white">{{ (winRate$ | async) | number:'1.1-1' }}%</div>
+      <div class="w-full h-1.5 rounded-full mt-4 bg-luxury-surface/5 overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-1000 shadow-gold" style="background:var(--theme-accent)"
+             [style.width.%]="winRate$ | async"></div>
+      </div>
+    </div>
+
+    <div class="fn-card p-6 card-3d group" style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">Profit Factor</span>
+        <i class="fa-solid fa-chart-line text-green-400 opacity-20"></i>
+      </div>
+      <div class="text-3xl font-black text-white">{{ (profitFactor$ | async) | number:'1.2-2' }}</div>
+      <p class="text-[9px] font-bold uppercase tracking-widest mt-3" [style.color]="(profitFactor$ | async)! >= 1.5 ? '#00ff88' : '#ff4444'">
+        {{ (profitFactor$ | async)! >= 1.5 ? 'Elite Efficiency' : 'Optimization Needed' }}
+      </p>
+    </div>
+
+    <div class="fn-card p-6 card-3d group" style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">Sharpe Ratio</span>
+        <i class="fa-solid fa-scale-balanced text-blue-400 opacity-20"></i>
+      </div>
+      <div class="text-3xl font-black text-white">{{ (sharpeRatio$ | async) | number:'1.2-2' }}</div>
+      <p class="text-[9px] font-bold uppercase tracking-widest mt-3 opacity-40">Risk Adjusted Return</p>
+    </div>
+
+    <div class="fn-card p-6 card-3d group" style="background:rgba(255,255,255,0.03); border:1px solid var(--theme-border)">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-[10px] font-black uppercase tracking-widest" style="color:var(--theme-muted)">Max DD (Hist)</span>
+        <i class="fa-solid fa-arrow-down-short-wide text-red-400 opacity-20"></i>
+      </div>
+      <div class="text-3xl font-black text-white">{{ (maxDrawdown$ | async) | number:'1.1-1' }}%</div>
+      <p class="text-[9px] font-bold uppercase tracking-widest mt-3 opacity-40">Preservation Metric</p>
+    </div>
+
+  </div>
+
+  <!-- ===================== CHARTS GRID (GAP-6) ===================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 animate-fade-in animate-d2">
+    
+    <!-- Distribution by Day -->
+    <div class="xl:col-span-2 fn-card p-8" style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+      <h3 class="font-black text-xs uppercase tracking-widest mb-8 flex items-center gap-2" style="color:var(--theme-muted)">
+        <i class="fa-solid fa-calendar-day"></i> Day of Week Performance
+      </h3>
+      <div class="h-[300px] w-full">
+        <canvas #dayOfWeekChart></canvas>
+      </div>
+    </div>
+
+    <!-- Session Split -->
+    <div class="fn-card p-8" style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+      <h3 class="font-black text-xs uppercase tracking-widest mb-8 flex items-center gap-2" style="color:var(--theme-muted)">
+        <i class="fa-solid fa-clock"></i> Session Volatility
+      </h3>
+      <div class="h-[300px] w-full relative">
+        <canvas #sessionChart></canvas>
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none mb-10">
+          <div class="text-center">
+            <div class="text-3xl font-black text-white">3</div>
+            <div class="text-[8px] font-black uppercase tracking-widest opacity-40">Active Spheres</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===================== DEEP STATS (GAP-6) ===================== -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-fade-in animate-d3">
+    
+    <!-- Secondary Metrics -->
+    <div class="fn-card p-8" style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+      <h3 class="font-black text-xs uppercase tracking-widest mb-8" style="color:var(--theme-muted)">Account Dynamics</h3>
+      <div class="space-y-6">
+        <div class="flex justify-between items-center py-3 border-b border-white/5">
+          <span class="text-xs font-bold opacity-60">Profit Expectancy (Per Trade)</span>
+          <span class="text-sm font-black text-white">{{ (expectancy$ | async) | currency:'USD' }}</span>
+        </div>
+        <div class="flex justify-between items-center py-3 border-b border-white/5">
+          <span class="text-xs font-bold opacity-60">Avg R-Multiple</span>
+          <span class="text-sm font-black text-accent">{{ (avgRMultiple$ | async) | number:'1.1-2' }}R</span>
+        </div>
+        <div class="flex justify-between items-center py-3 border-b border-white/5">
+          <span class="text-xs font-bold opacity-60">Max Consecutive Losses</span>
+          <span class="text-sm font-black text-red-400">{{ maxConsLosses$ | async }} Trades</span>
+        </div>
+        <div class="flex justify-between items-center py-3" *ngIf="avgWinLoss$ | async as awl">
+          <span class="text-xs font-bold opacity-60">Risk/Reward Realized</span>
+          <span class="text-sm font-black text-white">{{ (awl.avgWin / (awl.avgLoss || 1)) | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Symbol Profitability -->
+    <div class="xl:col-span-2 fn-card p-8" style="background:rgba(255,255,255,0.02); border:1px solid var(--theme-border)">
+      <h3 class="font-black text-xs uppercase tracking-widest mb-8 flex items-center gap-2" style="color:var(--theme-muted)">
+        <i class="fa-solid fa-dna"></i> Instrument Efficiency Matrix
+      </h3>
+      <div class="h-[250px] w-full">
+        <canvas #symbolChart></canvas>
+      </div>
+    </div>
+
+  </div>
+
+</div>

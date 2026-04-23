@@ -1,0 +1,68 @@
+<aside class="h-screen sticky top-0 flex flex-col transition-all duration-300 z-50"
+       [class.w-72]="!isCompact"
+       [class.w-20]="isCompact"
+       style="background:var(--theme-sidebar); border-inline-end: 1px solid var(--theme-border)">
+
+  <!-- Logo Section -->
+  <div class="p-6 mb-4 flex items-center gap-4 transition-all" [class.justify-center]="isCompact">
+    <div class="w-10 h-10 shrink-0 shadow-gold rounded-xl p-1.5" 
+         style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,215,0,0.2)">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 5L15 25V75L50 95L85 75V25L50 5Z" stroke="var(--theme-accent)" stroke-width="2" />
+        <path d="M50 15L25 30V70L50 85L75 70V30L50 15Z" fill="var(--theme-accent)" fill-opacity="0.2" />
+        <path d="M40 45L50 35L60 45M40 55L50 65L60 55" stroke="var(--theme-accent)" stroke-width="4" stroke-linecap="round" />
+      </svg>
+    </div>
+    <span *ngIf="!isCompact" class="text-lg font-black tracking-tighter text-white animate-fade-in group">
+      TradeFlow <span style="color:var(--theme-accent)">Pro</span>
+    </span>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+    <a *ngFor="let item of navItems" 
+       [routerLink]="item.path" 
+       routerLinkActive="active"
+       class="nav-item group flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 border border-transparent hover:bg-luxury-surface/5"
+       [title]="t(item.key)">
+      
+      <!-- Icon (Gold/White) -->
+      <lucide-angular [img]="item.icon" 
+                    class="w-5 h-5 shrink-0 transition-transform group-hover:scale-110"
+                    [style.color]="'var(--theme-accent)'"></lucide-angular>
+      
+      <span *ngIf="!isCompact" class="nav-label text-sm font-bold uppercase tracking-widest text-[#ffffff] group-hover:text-white transition-colors">
+        {{ t(item.key) }}
+      </span>
+      
+      <!-- Tooltip for compact mode -->
+      <div *ngIf="isCompact" class="absolute left-16 px-4 py-2 rounded-xl bg-black border border-white/10 text-[10px] font-black uppercase tracking-widest text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-[100] shadow-2xl">
+        {{ t(item.key) }}
+      </div>
+    </a>
+  </nav>
+
+  <!-- User / Bottom -->
+  <div class="p-4 mt-auto space-y-4" style="border-top: 1px solid var(--theme-border)">
+    <!-- Active Account / Profile -->
+    <div class="flex items-center gap-3 p-3 rounded-2xl transition-all border border-white/5" 
+         [class.justify-center]="isCompact"
+         style="background:rgba(255,255,255,0.02)">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-gold" 
+           style="background:linear-gradient(135deg,var(--theme-accent),#ffaa00)">
+         <i class="fa-solid fa-user text-[10px] text-white"></i>
+      </div>
+      <div *ngIf="!isCompact" class="flex-1 min-w-0">
+        <p class="text-[10px] font-black truncate text-white uppercase tracking-widest">
+          {{ (authService.currentUser$ | async)?.firstName || 'Master' }}
+        </p>
+        <p class="text-[8px] font-bold truncate opacity-50 uppercase tracking-widest text-white">Elite Platform</p>
+      </div>
+    </div>
+
+    <button (click)="logout()" class="nav-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all !text-[#ff4444] hover:!bg-red-500/10 group">
+      <lucide-angular [img]="icons.LogOut" class="w-5 h-5" [style.color]="'#ff4444'"></lucide-angular>
+      <span *ngIf="!isCompact" class="font-black uppercase tracking-widest text-[10px] text-[#ff4444]">{{ t('nav.logout') }}</span>
+    </button>
+  </div>
+</aside>

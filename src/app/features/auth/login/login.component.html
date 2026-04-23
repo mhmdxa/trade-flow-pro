@@ -1,0 +1,279 @@
+<div class="min-h-screen flex flex-col lg:flex-row relative overflow-hidden" style="background: var(--theme-bg)">
+
+  <!-- ══ Animated SVG Trading Chart Background ══ -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index:0">
+    <!-- Glow blobs -->
+    <div class="absolute top-[-15%] left-[-8%] w-[500px] h-[500px] rounded-full blur-[130px]" style="background:rgba(0,240,255,0.1)"></div>
+    <div class="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full blur-[110px]" style="background:rgba(79,135,255,0.06)"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full blur-[80px]" style="background:rgba(0,240,255,0.05)"></div>
+
+    <!-- Animated SVG Chart Lines -->
+    <svg class="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lineGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#00F0FF" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#00F0FF" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#00F0FF" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="lineGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#00F0FF" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#00F0FF" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#00F0FF" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+
+      <!-- Main equity curve -->
+      <path d="M0,500 C80,490 120,520 180,460 C240,400 280,430 340,370 C400,310 440,350 500,280 C560,210 600,240 660,190 C720,140 760,170 820,130 C880,90 920,110 980,80 C1040,50 1080,70 1140,60 C1200,50 1280,40 1440,30"
+            fill="none" stroke="url(#lineGrad1)" stroke-width="3" filter="url(#glow)">
+        <animate attributeName="stroke-dashoffset" from="2000" to="0" dur="4s" fill="freeze"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="6s" repeatCount="indefinite"/>
+      </path>
+
+      <!-- Secondary curve -->
+      <path d="M0,600 C100,580 160,620 240,560 C320,500 380,540 460,490 C540,440 580,470 660,420 C740,370 800,400 880,360 C960,320 1020,340 1100,310 C1180,280 1300,270 1440,260"
+            fill="none" stroke="url(#lineGrad2)" stroke-width="2" filter="url(#glow)">
+        <animate attributeName="stroke-dashoffset" from="2000" to="0" dur="5s" fill="freeze"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;0,5;0,0" dur="8s" repeatCount="indefinite"/>
+      </path>
+
+      <!-- Candlestick bars (decorative) -->
+      <g opacity="0.6" fill="none">
+        <line x1="200" y1="450" x2="200" y2="480" stroke="#00F0FF" stroke-width="6" stroke-linecap="round"/>
+        <line x1="200" y1="442" x2="200" y2="492" stroke="#00F0FF" stroke-width="1"/>
+        <line x1="280" y1="410" x2="280" y2="445" stroke="#00F0FF" stroke-width="6" stroke-linecap="round"/>
+        <line x1="280" y1="400" x2="280" y2="455" stroke="#00F0FF" stroke-width="1"/>
+        <line x1="360" y1="440" x2="360" y2="470" stroke="#ff4444" stroke-width="6" stroke-linecap="round"/>
+        <line x1="360" y1="430" x2="360" y2="480" stroke="#ff4444" stroke-width="1"/>
+        <line x1="440" y1="370" x2="440" y2="400" stroke="#00F0FF" stroke-width="6" stroke-linecap="round"/>
+        <line x1="520" y1="350" x2="520" y2="385" stroke="#00F0FF" stroke-width="6" stroke-linecap="round"/>
+        <line x1="600" y1="380" x2="600" y2="410" stroke="#ff4444" stroke-width="6" stroke-linecap="round"/>
+        <line x1="680" y1="310" x2="680" y2="345" stroke="#00F0FF" stroke-width="6" stroke-linecap="round"/>
+        <line x1="760" y1="290" x2="760" y2="320" stroke="#00F0FF" stroke-width="6" stroke-linecap="round"/>
+        <line x1="840" y1="300" x2="840" y2="335" stroke="#ff4444" stroke-width="6" stroke-linecap="round"/>
+        <line x1="920" y1="260" x2="920" y2="290" stroke="#00F0FF" stroke-width="6" stroke-linecap="round"/>
+      </g>
+
+      <!-- Grid lines -->
+      <line x1="0" y1="200" x2="1440" y2="200" stroke="rgba(0,240,255,0.06)" stroke-width="1" stroke-dasharray="8,8"/>
+      <line x1="0" y1="400" x2="1440" y2="400" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="8,8"/>
+      <line x1="0" y1="600" x2="1440" y2="600" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="8,8"/>
+      <line x1="360" y1="0" x2="360" y2="800" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="8,8"/>
+      <line x1="720" y1="0" x2="720" y2="800" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="8,8"/>
+      <line x1="1080" y1="0" x2="1080" y2="800" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="8,8"/>
+    </svg>
+  </div>
+
+  <!-- ══ LEFT BRAND PANEL ══ -->
+  <div class="hidden lg:flex flex-col justify-between w-[52%] p-14 relative overflow-hidden shadow-neon" style="background:var(--theme-surface); border-right:1px solid var(--theme-border); z-index:1">
+
+    <!-- Inner glow -->
+    <div class="absolute top-1/3 left-1/4 w-72 h-72 rounded-full blur-3xl pointer-events-none"
+         style="background:rgba(0,240,255,0.1)"></div>
+    <div class="absolute bottom-0 right-0 w-64 h-64 rounded-full blur-3xl pointer-events-none"
+         style="background:rgba(0,255,136,0.04)"></div>
+
+    <!-- Logo -->
+    <div class="relative z-10 animate-fade-in">
+      <div class="flex items-center gap-3 mb-1">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center shadow-gold animate-pulse-glow"
+             style="background:linear-gradient(135deg,#ffd700,#f59e0b)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 17L9 11L13 15L21 7" stroke="#0a0a2a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 7H21V14" stroke="#0a0a2a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="text-2xl font-black tracking-tight" style="color:#fff">
+          Trade<span style="color:var(--theme-accent)">Flow</span>
+          <span class="text-xs font-medium align-top ml-1 opacity-60" style="color:var(--theme-muted)">PRO</span>
+        </span>
+      </div>
+      <p class="text-sm font-medium mt-1" style="color:var(--theme-muted)">{{ t('app.tagline') }}</p>
+    </div>
+
+    <!-- Hero Text -->
+    <div class="relative z-10 space-y-6 my-auto py-10 animate-fade-in animate-d2">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4"
+           style="background:rgba(0,255,136,0.1); color:#00ff88; border:1px solid rgba(0,255,136,0.2)">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse inline-block"></span>
+        {{ t('dash.riskActive') }}
+      </div>
+
+      <h1 class="text-4xl xl:text-5xl font-black leading-tight tracking-tight" style="color:#fff">
+        {{ t('auth.login.hero') }}
+      </h1>
+      <p class="text-lg leading-relaxed" style="color:var(--theme-muted); max-width:380px">
+        {{ t('auth.login.heroSub') }}
+      </p>
+
+      <!-- Stats row -->
+      <div class="grid grid-cols-3 gap-4 pt-4">
+        <div class="text-center p-3 rounded-xl" style="background:rgba(255,255,255,0.04); border:1px solid var(--theme-border)">
+          <div class="text-xl font-black" style="color:#00ff88">98%</div>
+          <div class="text-xs mt-0.5" style="color:var(--theme-muted)">{{ t('dash.winRate') }}</div>
+        </div>
+        <div class="text-center p-3 rounded-xl" style="background:rgba(255,255,255,0.04); border:1px solid var(--theme-border)">
+          <div class="text-xl font-black" style="color:var(--theme-accent)">12K+</div>
+          <div class="text-xs mt-0.5" style="color:var(--theme-muted)">{{ t('dash.totalTrades') }}</div>
+        </div>
+        <div class="text-center p-3 rounded-xl" style="background:rgba(255,255,255,0.04); border:1px solid var(--theme-border)">
+          <div class="text-xl font-black" style="color:#4f87ff">4.9★</div>
+          <div class="text-xs mt-0.5" style="color:var(--theme-muted)">Rating</div>
+        </div>
+      </div>
+
+      <!-- Feature badges -->
+      <div class="flex flex-wrap gap-2 pt-2">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold"
+             style="background:rgba(255,255,255,0.05); border:1px solid var(--theme-border); color:var(--theme-muted)">
+          <i class="fas fa-chart-line" style="color:var(--theme-accent)"></i>
+          {{ t('dash.liveMetrics') }}
+        </div>
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold"
+             style="background:rgba(255,255,255,0.05); border:1px solid var(--theme-border); color:var(--theme-muted)">
+          <i class="fas fa-shield-halved" style="color:#00ff88"></i>
+          {{ t('risk.title') }}
+        </div>
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold"
+             style="background:rgba(255,255,255,0.05); border:1px solid var(--theme-border); color:var(--theme-muted)">
+          <i class="fas fa-globe" style="color:#4f87ff"></i>
+          AR / EN / FR
+        </div>
+      </div>
+    </div>
+
+    <p class="text-xs relative z-10" style="color:var(--theme-muted)">{{ t('common.copyright') }}</p>
+  </div>
+
+  <!-- ══ RIGHT FORM PANEL ══ -->
+  <div class="flex flex-1 flex-col justify-center items-center p-6 sm:p-10 lg:p-16 relative" style="z-index:1">
+
+    <!-- Mobile Logo -->
+    <div class="flex items-center gap-2 mb-10 lg:hidden animate-fade-in">
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#ffd700,#f59e0b)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17L9 11L13 15L21 7" stroke="#0a0a2a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 7H21V14" stroke="#0a0a2a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="text-xl font-black" style="color:#fff">Trade<span style="color:var(--theme-accent)">Flow</span></span>
+    </div>
+
+    <div class="w-full max-w-[420px]">
+      <!-- Header -->
+      <div class="mb-8 animate-fade-in">
+        <h2 class="text-3xl font-black tracking-tight" style="color:var(--theme-text)">
+          {{ t('auth.login.title') }}
+        </h2>
+        <p class="mt-2" style="color:var(--theme-muted)">{{ t('auth.login.subtitle') }}</p>
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="error" class="mb-6 p-4 rounded-xl flex items-center gap-3 animate-fade-in-scale"
+           style="background:rgba(255,68,68,0.1); border:1px solid rgba(255,68,68,0.3)">
+        <i class="fas fa-circle-exclamation" style="color:#ff4444"></i>
+        <p class="text-sm font-semibold" style="color:#ff4444">{{ error }}</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5 animate-fade-in animate-d1" autocomplete="on">
+
+        <!-- Email -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold uppercase tracking-widest" style="color:var(--theme-muted)">
+            {{ t('auth.login.email') }}
+            <span style="color:var(--theme-muted); font-size:0.7rem; margin-inline-start:4px; font-weight:400; text-transform:none">
+              / {{ t('auth.login.email') }}
+            </span>
+          </label>
+          <div class="relative">
+            <i class="fas fa-envelope absolute start-3 top-1/2 -translate-y-1/2" style="color:var(--theme-muted); font-size:0.8rem"></i>
+            <input type="email" formControlName="email"
+                   class="luxury-input !ps-9 !py-3.5"
+                   [placeholder]="'you@example.com'"
+                   autocomplete="email"
+                   id="login-email">
+          </div>
+          <p *ngIf="submitted && f['email'].errors" class="text-xs ps-1" style="color:#ff4444">
+            <i class="fas fa-triangle-exclamation me-1"></i>{{ t('auth.login.emailRequired') }}
+          </p>
+        </div>
+
+        <!-- Password -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold uppercase tracking-widest" style="color:var(--theme-muted)">
+              {{ t('auth.login.password') }}
+            </label>
+            <a href="#" class="text-xs font-bold transition-colors" style="color:var(--theme-accent)"
+               (click)="$event.preventDefault()">
+              {{ t('auth.login.forgot') }}
+            </a>
+          </div>
+          <div class="relative">
+            <i class="fas fa-lock absolute start-3 top-1/2 -translate-y-1/2" style="color:var(--theme-muted); font-size:0.8rem"></i>
+            <input [type]="showPassword ? 'text' : 'password'"
+                   formControlName="password"
+                   class="luxury-input !ps-9 !pe-10 !py-3.5"
+                   placeholder="••••••••"
+                   autocomplete="current-password"
+                   id="login-password">
+            <button type="button" class="absolute end-3 top-1/2 -translate-y-1/2 p-1 rounded"
+                    (click)="showPassword = !showPassword"
+                    style="color:var(--theme-muted); background:transparent; border:none; cursor:pointer">
+              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" style="font-size:0.85rem"></i>
+            </button>
+          </div>
+          <p *ngIf="submitted && f['password'].errors" class="text-xs ps-1" style="color:#ff4444">
+            <i class="fas fa-triangle-exclamation me-1"></i>{{ t('auth.login.passwordRequired') }}
+          </p>
+        </div>
+
+        <!-- Submit -->
+        <div class="pt-2">
+          <button type="submit" id="btn-login-submit"
+                  [disabled]="loading"
+                  class="btn-gold w-full py-4 text-sm font-black flex items-center justify-center gap-2 transition-all"
+                  style="border-radius:0.75rem">
+            <span *ngIf="!loading">
+              <i class="fas fa-right-to-bracket me-2"></i>{{ t('auth.login.btn') }}
+            </span>
+            <span *ngIf="loading" class="flex items-center gap-2">
+              <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+              </svg>
+              {{ t('auth.login.authenticating') }}
+            </span>
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-3 my-1">
+          <div class="flex-1 h-px" style="background:var(--theme-border)"></div>
+          <span class="text-xs font-semibold" style="color:var(--theme-muted)">OR</span>
+          <div class="flex-1 h-px" style="background:var(--theme-border)"></div>
+        </div>
+
+        <!-- Google Login -->
+        <button type="button" id="btn-login-google"
+                (click)="loginWithGoogle()"
+                class="w-full py-3.5 flex items-center justify-center gap-3 font-bold text-sm transition-all rounded-xl"
+                style="background:rgba(255,255,255,0.05); border:1px solid var(--theme-border); color:var(--theme-text); cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          {{ t('auth.login.google') }}
+        </button>
+      </form>
+
+      <!-- Register Link -->
+      <p class="text-center mt-6 text-sm animate-fade-in animate-d3" style="color:var(--theme-muted)">
+        {{ t('auth.login.noAccount') }}
+        <a routerLink="/register" class="font-black ms-1 transition-colors" style="color:var(--theme-accent)">
+          {{ t('auth.login.createAcc') }}
+        </a>
+      </p>
+    </div>
+  </div>
+</div>

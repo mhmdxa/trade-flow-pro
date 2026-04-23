@@ -1,0 +1,100 @@
+<header class="h-20 flex items-center justify-between px-6 sticky top-0 transition-all z-40"
+        style="background:var(--theme-bg); border-bottom: 1px solid var(--theme-border); color:#ffffff">
+
+  <!-- Left: Sidebar Toggle & Countdown -->
+  <div class="flex items-center gap-6">
+    <button (click)="toggleSidebar()" class="lg:hidden p-2.5 rounded-xl hover:bg-luxury-surface/5 transition-colors">
+      <lucide-angular [img]="icons.Menu" class="w-6 h-6 text-var(--theme-accent)"></lucide-angular>
+    </button>
+    
+    <div class="hidden md:flex items-center gap-3 px-4 py-2 rounded-2xl bg-luxury-surface/5 border border-white/5 shadow-inner">
+      <lucide-angular [img]="icons.Clock" class="w-4 h-4 text-var(--theme-accent)"></lucide-angular>
+      <div class="flex flex-col">
+        <span class="text-[8px] font-black uppercase tracking-widest opacity-40">System Reset In</span>
+        <span class="text-sm font-black tracking-tighter tabular-nums" style="color:var(--theme-accent)">{{ countdown }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Actions & User -->
+  <div class="flex items-center gap-2 sm:gap-4">
+    
+    <!-- Theme Toggle -->
+    <button (click)="toggleTheme()" 
+            class="p-2.5 rounded-xl hover:bg-luxury-surface/5 border border-transparent hover:border-white/10 transition-all group"
+            [title]="t('settings.tab.appearance')">
+      <lucide-angular [img]="settingsStore.current.theme === 'light-pro' ? icons.Moon : icons.Sun" 
+                    class="w-5 h-5 text-white/70 group-hover:text-var(--theme-accent) transition-colors"></lucide-angular>
+    </button>
+
+    <!-- Language Toggle -->
+    <button (click)="toggleLanguage()" 
+            class="p-2.5 rounded-xl hover:bg-luxury-surface/5 border border-transparent hover:border-white/10 transition-all group flex items-center gap-2"
+            title="Switch Language">
+      <lucide-angular [img]="icons.Globe" class="w-5 h-5 text-white/70 group-hover:text-var(--theme-accent)"></lucide-angular>
+      <span class="text-[10px] font-black uppercase hidden sm:inline text-white/70 group-hover:text-white">
+        {{ i18n.currentLang === 'ar' ? 'EN' : 'AR' }}
+      </span>
+    </button>
+
+    <!-- Notifications Bell -->
+    <div class="relative">
+      <button (click)="toggleNotifications()" 
+              class="p-2.5 rounded-xl hover:bg-luxury-surface/5 border border-transparent hover:border-white/10 transition-all group relative">
+        <lucide-angular [img]="icons.Bell" class="w-5 h-5 text-white/70 group-hover:text-var(--theme-accent)"></lucide-angular>
+        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-slate-900"></span>
+      </button>
+
+      <!-- Notifications Dropdown -->
+      <div *ngIf="isNotificationsOpen" 
+           class="absolute right-0 mt-4 w-72 rounded-2xl p-6 shadow-2xl border animate-fade-in-scale z-50"
+           style="background:var(--theme-surface); border-color:var(--theme-border)">
+        <h4 class="text-xs font-black uppercase tracking-widest text-white mb-4">Notifications</h4>
+        <div class="flex flex-col items-center justify-center py-6 gap-3 text-center">
+          <div class="w-12 h-12 rounded-full bg-luxury-surface/5 flex items-center justify-center">
+            <lucide-angular [img]="icons.Bell" class="w-5 h-5 opacity-20"></lucide-angular>
+          </div>
+          <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest">No new notifications</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="h-8 w-px bg-luxury-surface/10 mx-1"></div>
+
+    <!-- User Profile Dropdown -->
+    <div class="relative">
+      <button (click)="toggleProfileMenu()" 
+              class="flex items-center gap-3 p-1.5 pe-4 rounded-2xl hover:bg-luxury-surface/5 border border-transparent hover:border-white/10 transition-all group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-var(--theme-accent) to-var(--theme-accent2) flex items-center justify-center shadow-gold">
+          <span class="text-white font-black text-xs">{{ (currentUser$ | async)?.firstName?.charAt(0) || 'M' }}</span>
+        </div>
+        <div class="hidden sm:flex flex-col items-start text-start">
+          <span class="text-[10px] font-black text-white uppercase tracking-widest truncate max-w-[100px]">
+            {{ (currentUser$ | async)?.firstName || 'Master' }}
+          </span>
+          <span class="text-[8px] font-bold text-var(--theme-accent) uppercase tracking-widest">
+            {{ (activeAccount$ | async)?.name || 'Funded Pro' }}
+          </span>
+        </div>
+        <lucide-angular [img]="icons.ChevronDown" class="w-4 h-4 text-white/30 group-hover:text-white transition-opacity"></lucide-angular>
+      </button>
+
+      <!-- Profile Dropdown -->
+      <div *ngIf="isProfileMenuOpen" 
+           class="absolute right-0 mt-4 w-56 rounded-2xl overflow-hidden shadow-2xl border animate-fade-in-scale z-50"
+           style="background:var(--theme-surface); border-color:var(--theme-border)">
+        <div class="p-4 border-b border-white/5 bg-luxury-surface/5">
+          <p class="text-[10px] font-black text-white uppercase tracking-widest">{{ (currentUser$ | async)?.email }}</p>
+          <p class="text-[8px] font-bold text-white/40 uppercase mt-0.5">Premium Subscription</p>
+        </div>
+        <div class="p-2">
+          <button (click)="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-500 transition-colors">
+            <span class="text-[10px] font-black uppercase tracking-widest">Logout System</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>

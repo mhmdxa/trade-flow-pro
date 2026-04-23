@@ -1,0 +1,4 @@
+<div [dir]="(i18n.lang$ | async) === 'ar' ? 'rtl' : 'ltr'" class="relative min-h-screen">
+  <router-outlet></router-outlet>
+  <app-toast></app-toast>
+</div>
