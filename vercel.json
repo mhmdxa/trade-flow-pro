@@ -1,0 +1,8 @@
+{
+  "framework": "angular",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/trade-flow/browser",
+  "routes": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
