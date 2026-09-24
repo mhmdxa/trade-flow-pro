@@ -1,27 +1,84 @@
 # TradeFlow
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21.
+TradeFlow is a trading-management application for organizing accounts, strategies, trades, journals, analytics, risk settings, reports, and calendar events in one place.
 
-## Development server
+## What is inside?
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Accounts** — trading account information.
+- **Trades** — entry, exit, stop loss, take profit, P/L and notes.
+- **Strategies** — strategy name, timeframe, indicators, entry rules and exit rules.
+- **Journal** — trading notes, emotions and mistakes.
+- **Analytics** — win rate, profit factor and trade counts.
+- **Risk settings** — initial balance, daily loss limit and maximum drawdown limit.
+- **Reports** — saved reports and report links.
+- **Calendar events** — market/event reminders and impact information.
+- **Frontend** — Angular application.
+- **Database** — SQLite database file used by the project.
 
-## Code scaffolding
+## Technology
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Angular 18
+- TypeScript
+- RxJS
+- Chart.js
+- Tailwind CSS
+- SQLite
+- jsPDF
+- XLSX export
 
-## Build
+## Run the project
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Install dependencies:
 
-## Running unit tests
+```bash
+npm install
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Start the development server:
 
-## Running end-to-end tests
+```bash
+npm start
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Build for production:
 
-## Further help
+```bash
+npm run build
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Run tests:
+
+```bash
+npm test
+```
+
+## Database
+
+The repository contains `tradeflow.db`, a SQLite database.
+
+The database currently contains tables for users, trades, strategies, journals, analytics, risk settings, reports, calendar events, and application settings.
+
+**Important:** do not upload real passwords, API keys, JWT secrets, or other private credentials to GitHub.
+
+## Project goal
+
+The goal of TradeFlow is to turn trading activity into an organized, measurable workflow instead of scattered notes and random records.
+
+## Development roadmap
+
+1. Document the current architecture.
+2. Verify the database schema and application data flow.
+3. Review authentication and password handling.
+4. Separate frontend configuration from backend secrets.
+5. Add clear validation and error handling.
+6. Add tests for critical trading and risk calculations.
+7. Improve documentation and screenshots.
+8. Prepare a clean portfolio/demo version.
+
+## Repository structure
+
+The main application is in this repository. Experimental/duplicate repositories are being kept separate until they are reviewed and removed manually from GitHub.
+
+---
+
+**Status:** Active development
